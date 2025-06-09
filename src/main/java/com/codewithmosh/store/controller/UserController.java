@@ -1,6 +1,8 @@
 package com.codewithmosh.store.controller;
 
+import com.codewithmosh.store.dto.UserDto;
 import com.codewithmosh.store.entities.User;
+import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,14 +20,17 @@ import java.util.List;
 public class UserController {
 
     private final UserRepository userRepository;
-
+    private final UserMapper userMapper;
     @GetMapping
-    public Iterable<User> getAllUser(){
-        return userRepository.findAll();
+    public Iterable<UserDto> getAllUser(){
+        return userRepository.findAll()
+                .stream()
+                .map(userMapper::toDto)
+                .toList();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable long id){
+    public ResponseEntity<UserDto> getUser(@PathVariable long id){
         var user = userRepository.findById(id).orElse(null);
 
         if (user == null){
@@ -33,7 +38,8 @@ public class UserController {
             return ResponseEntity.notFound().build();
         }
 
+//        var userDto = new UserDto(user.getId(),user.getName(),user.getEmail());
 //        return new ResponseEntity<>(user,HttpStatus.OK);
-        return ResponseEntity.ok(user);
+        return ResponseEntity.ok(userMapper.toDto(user));
     }
 }
