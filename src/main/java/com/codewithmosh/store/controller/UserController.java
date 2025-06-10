@@ -1,6 +1,7 @@
 package com.codewithmosh.store.controller;
 
-import com.codewithmosh.store.dto.UserDto;
+import com.codewithmosh.store.dtos.RegisterUserRequest;
+import com.codewithmosh.store.dtos.UserDto;
 import com.codewithmosh.store.mappers.UserMapper;
 import com.codewithmosh.store.repositories.UserRepository;
 import lombok.AllArgsConstructor;
@@ -48,5 +49,12 @@ public class UserController {
 //        var userDto = new UserDto(user.getId(),user.getName(),user.getEmail());
 //        return new ResponseEntity<>(user,HttpStatus.OK);
         return ResponseEntity.ok(userMapper.toDto(user));
+    }
+
+    @PostMapping
+    public UserDto createUser(@RequestBody RegisterUserRequest request){
+        var user = userMapper.toEntity(request);
+        System.out.println(user);
+        return null;
     }
 }
