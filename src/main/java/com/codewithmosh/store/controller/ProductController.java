@@ -51,4 +51,28 @@ public class ProductController {
         var url = uriBuilder.path("/products/{id}").buildAndExpand(productDto.getId()).toUri();
         return ResponseEntity.created(url).body(productDto);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDto> updateProduct(
+            @PathVariable long id,
+            @RequestBody ProductDto productDto){
+        var category= categoryRepository.findById(productDto.getCategoryId()).orElse(null);
+
+        if (category == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        var product = productRepository.findById(id).orElse(null);
+
+        if (product == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        productMapper.update(productDto,product);
+        product.setCategory(category);
+        productRepository.save(product);
+        productDto.setId(product.getId());
+        return ResponseEntity.ok(productDto);
+
+    }
 }
